@@ -16,6 +16,7 @@ public class AnalysisOutput implements IAnalysisOutput {
 	private final Project project;
 	private final ToolWindowManager toolWindowManager;
 	private UsageTreeNode root;
+	private JTextArea textArea;
 
 	public AnalysisOutput(Project inProject, ToolWindowManager inInstance) {
 		this.project = inProject;
@@ -33,11 +34,16 @@ public class AnalysisOutput implements IAnalysisOutput {
 		JTree myTree = new JTree(root);
 		Content content = ContentFactory.SERVICE.getInstance().createContent(myTree, Strings.ANALYSIS, false);
 		contentManager.addContent(content);
+
+		textArea = new JTextArea("hallo\n");
+		Content content2 = ContentFactory.SERVICE.getInstance().createContent(textArea, Strings.ANALYSIS_CONSOLE, false);
+		contentManager.addContent(content2);
 	}
 
 	public void addResult(AnalysisResult inAnalysisResult) {
-		UsageTreeNode moduleNode = new UsageTreeNode("some module", root);
+		UsageTreeNode moduleNode = new UsageTreeNode(inAnalysisResult.getValue(), root);
 		root.add(moduleNode);
+		textArea.append(inAnalysisResult.getValue() + "\n");
 	}
 
 	static class UsageTreeNode extends DefaultMutableTreeNode {

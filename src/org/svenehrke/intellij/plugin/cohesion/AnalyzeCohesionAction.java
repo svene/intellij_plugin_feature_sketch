@@ -16,11 +16,15 @@ public class AnalyzeCohesionAction extends AnAction {
 		Project project = actionEvent.getData(PlatformDataKeys.PROJECT);
 //		showMessage(project, "Hello, " + "!\n I am glad to see you.");
 		VirtualFile currentFile = DataKeys.VIRTUAL_FILE.getData(actionEvent.getDataContext());
-		String s = currentFile != null ? currentFile.getName() : "NO FILE";
-		showMessage(project, s);
+//		String s = currentFile != null ? currentFile.getName() : "NO FILE";
+//		showMessage(project, s);
+
+		AnalysisInput input = new AnalysisInput(currentFile);
+
 		AnalysisOutput output = new AnalysisOutput(project, ToolWindowManager.getInstance(project));
 		output.init();
-		AnalyzeTask task = new AnalyzeTask(project, new AnalyzeTaskOptions(), output);
+
+		AnalyzeTask task = new AnalyzeTask(project, new AnalyzeTaskOptions(), input, output);
 		ProgressManager.getInstance().run(task);
 	}
 
