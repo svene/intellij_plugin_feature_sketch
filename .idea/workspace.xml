@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/src/org/svenehrke/intellij/plugin/cohesion/AnalyzeTask.java" line="30" />
+    <bookmark url="file://$PROJECT_DIR$/src/org/svenehrke/intellij/plugin/cohesion/AnalyzeTask.java" line="23" />
+  </component>
   <component name="BuildServerSettings">
     <option name="LOGIN" value="" />
     <option name="SERVER_URL" value="http://buildserver" />
@@ -24,7 +28,10 @@
     <option name="FILTER_BY_CURRENT_PROJECT" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8f136e56-a58c-4efb-b2be-d6077a137cf6" name="Default" comment="" />
+    <list default="true" id="8f136e56-a58c-4efb-b2be-d6077a137cf6" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="cohesion.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Dummy.txt" changelist="8f136e56-a58c-4efb-b2be-d6077a137cf6" time="1361622417430" ignored="false" />
@@ -118,7 +125,7 @@
       <file leaf-file-name="AnalyzeTask.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/org/svenehrke/intellij/plugin/cohesion/AnalyzeTask.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="1" selection-start="1115" selection-end="1115" vertical-scroll-proportion="0.9053255">
+            <state line="23" column="0" selection-start="805" selection-end="805" vertical-scroll-proportion="0.57840234">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -564,7 +571,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/svenehrke/intellij/plugin/cohesion/AnalyzeTask.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="1" selection-start="1115" selection-end="1115" vertical-scroll-proportion="0.9053255">
+        <state line="23" column="0" selection-start="805" selection-end="805" vertical-scroll-proportion="0.57840234">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
