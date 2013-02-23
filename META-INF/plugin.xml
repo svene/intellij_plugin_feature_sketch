@@ -1,0 +1,44 @@
+<idea-plugin version="2">
+  <id>org.svenehrke.unique.plugin.id</id>
+  <name>Cohesion Plugin</name>
+  <version>1.0</version>
+  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+
+  <description>This plugin shows cohesion of current file</description>
+
+  <change-notes>no changes so far</change-notes>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="107.105"/>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+	  <!--<action id="DependencyAnalyzer.Action" class="org.svenehrke.intellij.plugin.cohesion.AnalyzeCohesionAction"-->
+			  <!--text="Show Cohesion of current FIle">-->
+		  <!--<add-to-group group-id="AnalyzeActions" anchor="first"/>-->
+	  <!--</action>-->
+	  <action id="org.svenehrke.intellij.plugin.cohesion.AnalyzeCohesionAction"
+			  class="org.svenehrke.intellij.plugin.cohesion.AnalyzeCohesionAction" text="Cohesion"
+			  description="Show Cohesion">
+		  <add-to-group group-id="AnalyzeActions" anchor="last"/>
+	  </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+</idea-plugin>
