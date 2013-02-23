@@ -10,16 +10,14 @@ public class AnalyzeTask extends Task.Backgroundable {
 
 	private final IAnalysisOutput output;
 	private final AnalyzeTaskOptions taskOptions;
+	private final Project project;
 
 	AnalyzeTask(Project project, AnalyzeTaskOptions taskOptions, IAnalysisOutput output) {
 		super(project, "title: cohesion", true, new MyPerformInBackgroundOption());
 
 		this.taskOptions = taskOptions;
 		this.output = output;
-
-//		AnalysisOutput analysisOutput = new AnalysisOutput(project, ToolWindowManager.getInstance(project));
-//		analysisOutput.init();
-
+		this.project = project;
 	}
 
 	public void run(@NotNull ProgressIndicator indicator) {

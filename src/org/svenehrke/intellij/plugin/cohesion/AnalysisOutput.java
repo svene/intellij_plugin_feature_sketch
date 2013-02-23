@@ -23,7 +23,10 @@ public class AnalysisOutput implements IAnalysisOutput {
 	}
 
 	public void init() {
-		ToolWindow toolWindow = toolWindowManager.registerToolWindow(ToolWindowId.DEPENDENCIES, true, ToolWindowAnchor.BOTTOM, project, true);
+		ToolWindow toolWindow = toolWindowManager.getToolWindow(ToolWindowId.DEPENDENCIES);
+		if (toolWindow == null) {
+			toolWindow = toolWindowManager.registerToolWindow(ToolWindowId.DEPENDENCIES, true, ToolWindowAnchor.BOTTOM, project, true);
+		}
 		toolWindow.setToHideOnEmptyContent(true);
 		ContentManager contentManager = toolWindow.getContentManager();
 		root = new UsageTreeNode(Strings.COHESION_RESULTS, null);
