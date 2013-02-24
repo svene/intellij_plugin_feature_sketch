@@ -35,6 +35,7 @@
 			  class="org.svenehrke.intellij.plugin.cohesion.AnalyzeCohesionAction" text="Cohesion"
 			  description="Show Cohesion">
 		  <add-to-group group-id="AnalyzeActions" anchor="last"/>
+		  <keyboard-shortcut first-keystroke="control alt g" keymap="$default"></keyboard-shortcut>
 	  </action>
   </actions>
 
