@@ -27,9 +27,7 @@ public class CohesionAnalyzer {
 
 	public void run() {
 		ApplicationManager.getApplication().runReadAction(new AnalyzerRunnable());
-//		final TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
-//		final ConsoleView console = builder.getConsole();
-//		console.print("hallo", ConsoleViewContentType.NORMAL_OUTPUT);
+		output.printCohesionGraph();
 	}
 
 	private class AnalyzerRunnable implements Runnable {
@@ -42,9 +40,14 @@ public class CohesionAnalyzer {
 				output.addResult(new AnalysisResult(packageName));
 
 				for (PsiClass psiClass : javaFile.getClasses()) {
+					final CohesionNode classNode = new CohesionNode(psiClass.getName());
+					output.addCohesionNode(classNode);
 					output.addResult(new AnalysisResult("- " + psiClass.getName()));
 
 					for (PsiField psiField : psiClass.getFields()) {
+						final CohesionNode fieldNode = new CohesionNode(psiField.getName());
+						classNode.addChild(fieldNode);
+
 						final Collection<PsiReference> usages = ReferencesSearch.search(psiField).findAll();
 						output.addResult(new AnalysisResult("-- " + psiField.getName() + " (" + usages.size() + ")"));
 
@@ -54,9 +57,10 @@ public class CohesionAnalyzer {
 							PsiReferenceExpression rx = (PsiReferenceExpression) usage;
 							PsiElement parent = rx.getParent();
 							while (!(parent instanceof PsiFile) && (parent != null)) {
-//								output.addResult(new AnalysisResult("---- parent: " + parent.toString()));
 								if (parent instanceof PsiMethod) {
 									PsiMethod method = (PsiMethod) parent;
+									final CohesionNode methodNode = new CohesionNode(method.getName());
+									fieldNode.addChild(methodNode);
 									output.addResult(new AnalysisResult("---- used in: " + method.getName()));
 								}
 								parent = parent.getParent();
