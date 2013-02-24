@@ -37,23 +37,19 @@ public class CohesionAnalyzer {
 			if (psiFile != null && JavaLanguage.INSTANCE.equals(psiFile.getLanguage())) {
 				PsiJavaFile javaFile = (PsiJavaFile) psiFile;
 				final String packageName = javaFile.getPackageName();
-				output.addResult(new AnalysisResult(packageName));
 
 				for (PsiClass psiClass : javaFile.getClasses()) {
 					final CohesionNode classNode = new CohesionNode(psiClass.getName());
 					output.addCohesionNode(classNode);
-					output.addResult(new AnalysisResult("- " + psiClass.getName()));
 
 					for (PsiField psiField : psiClass.getFields()) {
 						final CohesionNode fieldNode = new CohesionNode(psiField.getName());
 						classNode.addChild(fieldNode);
 
 						final Collection<PsiReference> usages = ReferencesSearch.search(psiField).findAll();
-						output.addResult(new AnalysisResult("-- " + psiField.getName() + " (" + usages.size() + ")"));
 
 						for (PsiReference usage : usages) {
 							final String s = usage.toString() + ", " + usage.getClass().getSimpleName();
-							output.addResult(new AnalysisResult("--- " + s));
 							PsiReferenceExpression rx = (PsiReferenceExpression) usage;
 							PsiElement parent = rx.getParent();
 							while (!(parent instanceof PsiFile) && (parent != null)) {
@@ -61,7 +57,6 @@ public class CohesionAnalyzer {
 									PsiMethod method = (PsiMethod) parent;
 									final CohesionNode methodNode = new CohesionNode(method.getName());
 									fieldNode.addChild(methodNode);
-									output.addResult(new AnalysisResult("---- used in: " + method.getName()));
 								}
 								parent = parent.getParent();
 							}
