@@ -37,7 +37,7 @@ public class AnalysisOutput implements IAnalysisOutput {
 //		Content content = ContentFactory.SERVICE.getInstance().createContent(myTree, Strings.ANALYSIS, false);
 //		contentManager.addContent(content);
 
-		textArea = new JTextArea("hallo\n");
+		textArea = new JTextArea();
 		Content content2 = ContentFactory.SERVICE.getInstance().createContent(textArea, Strings.ANALYSIS_CONSOLE, false);
 		contentManager.addContent(content2);
 	}
@@ -45,43 +45,17 @@ public class AnalysisOutput implements IAnalysisOutput {
 	public void addResult(AnalysisResult inAnalysisResult) {
 		UsageTreeNode moduleNode = new UsageTreeNode(inAnalysisResult.getValue(), root);
 //		root.add(moduleNode);
-		writeLine(inAnalysisResult.getValue());
-	}
-
-	public void writeLine(final String inString) {
-		textArea.append(inString + "\n");
+//		writeLine(inAnalysisResult.getValue());
 	}
 
 	public void printCohesionGraph() {
-		for (CohesionNode node : cohesionNode.getChildren().values()) {
-			_printCohesionGraph(node, 0);
-		}
-		writeLine("DONE");
-	}
-	public void _printCohesionGraph(CohesionNode inCohesionNode, int inLevel) {
-		int idx = 0;
-		final String indent = filledString(inLevel, " ");
-		StringBuilder sb = new StringBuilder(indent);
-		writeLine("number of children: " + inCohesionNode.getChildren().size());
-		for (CohesionNode node : inCohesionNode.getChildren().values()) {
-			if (idx > 0) sb.append(", ");
-			sb.append(node.getName());
-			idx++;
-		}
-		writeLine(sb.toString());
+//		final ICohesionPrinter cohesionPrinter = new DevelopmentCohesionPrinter(cohesionNode, new DefaultCohesionOutputWriter());
+		final ICohesionPrinter cohesionPrinter = new GraphvizCohesionPrinter(cohesionNode, new DefaultCohesionOutputWriter());
+		cohesionPrinter.printCohesionGraph();
 	}
 
 	public void addCohesionNode(CohesionNode inCohesionNode) {
 		this.cohesionNode = inCohesionNode;
-	}
-
-	private String filledString(int inHowMany, final String character) {
-		String result = character;
-		for (int i = 0; i < inHowMany; i++) {
-			result = result + " ";
-
-		}
-		return result;
 	}
 
 	static class UsageTreeNode extends DefaultMutableTreeNode {
@@ -107,4 +81,11 @@ public class AnalysisOutput implements IAnalysisOutput {
 		public UsageTreeNode clone() {
 			return (UsageTreeNode) super.clone();
 		}
-	}}
+	}
+
+	private class DefaultCohesionOutputWriter implements ICohesionOutputWriter {
+		public void writeLine(String inString) {
+			textArea.append(inString + "\n");
+		}
+	}
+}

@@ -5,7 +5,5 @@ public interface IAnalysisOutput {
 
 	void addCohesionNode(CohesionNode inClassNode);
 
-	void writeLine(String inString);
-
 	void printCohesionGraph();
 }
