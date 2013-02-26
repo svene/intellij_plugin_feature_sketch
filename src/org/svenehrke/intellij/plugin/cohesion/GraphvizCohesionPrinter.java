@@ -13,10 +13,13 @@ public class GraphvizCohesionPrinter implements ICohesionPrinter {
 
 	public void printCohesionGraph() {
 		writer.writeLine("digraph R {");
+		writer.writeLine("subgraph cluster_class {");
+		writer.writeLine("node [style=filled];");
+		writer.writeLine(String.format("label = \"%s\"", cohesionNode.getName()));
 		for (CohesionNode node : cohesionNode.getChildren().values()) {
 			_printCohesionGraph(node, 0);
 		}
-		writer.writeLine("}");
+		writer.writeLine("} }");
 	}
 
 	public void _printCohesionGraph(CohesionNode inCohesionNode, int inLevel) {

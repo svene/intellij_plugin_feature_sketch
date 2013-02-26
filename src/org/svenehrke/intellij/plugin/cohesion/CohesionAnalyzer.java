@@ -44,11 +44,11 @@ public class CohesionAnalyzer {
 					output.addCohesionNode(classNode);
 
 					for (PsiMember psiMember : psiClass.getFields()) {
-						handlePsiMember(classNode, psiMember, false);
+						handlePsiMember(psiClass, classNode, psiMember, false);
 					}
 					for (PsiMember psiMember : psiClass.getMethods()) {
 						PsiMethod psiMethod = (PsiMethod) psiMember;
-						handlePsiMember(classNode, psiMember, true);
+						handlePsiMember(psiClass, classNode, psiMember, true);
 					}
 
 
@@ -58,7 +58,7 @@ public class CohesionAnalyzer {
 			}
 		}
 
-		private void handlePsiMember(CohesionNode inClassNode, PsiMember psiMember, boolean isMethod) {
+		private void handlePsiMember(PsiClass inPsiClass, CohesionNode inClassNode, PsiMember psiMember, boolean isMethod) {
 			final CohesionNode cohesionNode = new CohesionNode(getNodeLabel(psiMember, isMethod), isMethod);
 			inClassNode.addChild(cohesionNode);
 
@@ -81,21 +81,49 @@ public class CohesionAnalyzer {
 					cohesionNode.addChild(new CohesionNode("type of parent not supported yet: " + usage.getClass().getSimpleName(), false));
 				}
 				else {
-					while (!(parent instanceof PsiFile) && (parent != null)) {
-						if (parent instanceof PsiMethod) {
-							PsiMethod method = (PsiMethod) parent;
-							final CohesionNode methodNode = new CohesionNode(getNodeLabel(method, true), true);
+					PsiMethod psiMethod = findOwningPsiMethod(parent);
+					if (psiMethod != null) {
+						final PsiClass owningPsiClass = findOwningPsiClass(psiMethod);
+						if (inPsiClass.getName().equals(owningPsiClass.getName())) {
+							final CohesionNode methodNode = new CohesionNode(getNodeLabel(psiMethod, true), true);
 							cohesionNode.addChild(methodNode);
 						}
-						parent = parent.getParent();
+/*
+						else {
+							final CohesionNode methodNode = new CohesionNode("* " + getNodeLabel(psiMethod, true), true);
+							cohesionNode.addChild(methodNode);
+						}
+*/
 					}
 				}
 			}
 		}
 	}
 
+	private PsiMethod findOwningPsiMethod(PsiElement node) {
+		PsiElement parent = node.getParent();
+		while (!(parent instanceof PsiFile) && (parent != null)) {
+			if (parent instanceof PsiMethod) {
+				return (PsiMethod) parent;
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
+	private PsiClass findOwningPsiClass(PsiElement node) {
+		PsiElement parent = node.getParent();
+		while (!(parent instanceof PsiFile) && (parent != null)) {
+			if (parent instanceof PsiClass) {
+				return (PsiClass) parent;
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
+
 	private String getNodeLabel(PsiMember psiMember, boolean isMethod) {
 		String name = psiMember.getName();
+/*
 		if (isMethod) {
 			PsiMethod psiMethod = (PsiMethod) psiMember;
 			final PsiElement parent = psiMethod.getParent();
@@ -107,6 +135,7 @@ public class CohesionAnalyzer {
 				name = "CLASS" + "." + name;
 			}
 		}
+*/
 		return name;
 	}
 }
