@@ -4,6 +4,7 @@ import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.CompositePsiElement;
 import com.intellij.psi.search.searches.ReferencesSearch;
 
 import java.util.Collection;
@@ -39,14 +40,15 @@ public class CohesionAnalyzer {
 //				final String packageName = javaFile.getPackageName();
 
 				for (PsiClass psiClass : javaFile.getClasses()) {
-					final CohesionNode classNode = new CohesionNode(psiClass.getName());
+					final CohesionNode classNode = new CohesionNode(psiClass.getName(), false);
 					output.addCohesionNode(classNode);
 
 					for (PsiMember psiMember : psiClass.getFields()) {
-						handlePsiMember(classNode, psiMember);
+						handlePsiMember(classNode, psiMember, false);
 					}
 					for (PsiMember psiMember : psiClass.getMethods()) {
-						handlePsiMember(classNode, psiMember);
+						PsiMethod psiMethod = (PsiMethod) psiMember;
+						handlePsiMember(classNode, psiMember, true);
 					}
 
 
@@ -56,25 +58,55 @@ public class CohesionAnalyzer {
 			}
 		}
 
-		private void handlePsiMember(CohesionNode inClassNode, PsiMember psiMember) {
-			final CohesionNode cohesionNode = new CohesionNode(psiMember.getName());
+		private void handlePsiMember(CohesionNode inClassNode, PsiMember psiMember, boolean isMethod) {
+			final CohesionNode cohesionNode = new CohesionNode(getNodeLabel(psiMember, isMethod), isMethod);
 			inClassNode.addChild(cohesionNode);
 
 			final Collection<PsiReference> usages = ReferencesSearch.search(psiMember).findAll();
 
 			for (PsiReference usage : usages) {
 				final String s = usage.toString() + ", " + usage.getClass().getSimpleName();
-				PsiReferenceExpression rx = (PsiReferenceExpression) usage;
-				PsiElement parent = rx.getParent();
-				while (!(parent instanceof PsiFile) && (parent != null)) {
-					if (parent instanceof PsiMethod) {
-						PsiMethod method = (PsiMethod) parent;
-						final CohesionNode methodNode = new CohesionNode(method.getName());
-						cohesionNode.addChild(methodNode);
+				PsiElement parent;
+				if (usage instanceof PsiReferenceExpression) {
+					PsiReferenceExpression rx = (PsiReferenceExpression) usage;
+					parent = rx.getParent();
+				}
+				else if (usage instanceof CompositePsiElement) {
+					parent = ((CompositePsiElement)usage).getParent();
+				}
+				else {
+					parent = null;
+				}
+				if (parent == null) {
+					cohesionNode.addChild(new CohesionNode("type of parent not supported yet: " + usage.getClass().getSimpleName(), false));
+				}
+				else {
+					while (!(parent instanceof PsiFile) && (parent != null)) {
+						if (parent instanceof PsiMethod) {
+							PsiMethod method = (PsiMethod) parent;
+							final CohesionNode methodNode = new CohesionNode(getNodeLabel(method, true), true);
+							cohesionNode.addChild(methodNode);
+						}
+						parent = parent.getParent();
 					}
-					parent = parent.getParent();
 				}
 			}
 		}
+	}
+
+	private String getNodeLabel(PsiMember psiMember, boolean isMethod) {
+		String name = psiMember.getName();
+		if (isMethod) {
+			PsiMethod psiMethod = (PsiMethod) psiMember;
+			final PsiElement parent = psiMethod.getParent();
+			if (parent instanceof PsiClass) {
+				PsiClass psiClass = (PsiClass) parent;
+				name = psiClass.getName() + "." + name;
+			}
+			else {
+				name = "CLASS" + "." + name;
+			}
+		}
+		return name;
 	}
 }

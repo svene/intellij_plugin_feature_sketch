@@ -22,11 +22,14 @@ public class GraphvizCohesionPrinter implements ICohesionPrinter {
 	public void _printCohesionGraph(CohesionNode inCohesionNode, int inLevel) {
 		int idx = 0;
 		final String indent = filledString(inLevel + 2, " ");
-		writer.writeLine(indent + inCohesionNode.getName());
+		writer.writeLine(indent + getCohesionNodeTitle(inCohesionNode));
 		for (CohesionNode node : inCohesionNode.getChildren().values()) {
-//			writer.writeLine(inCohesionNode.getName() + " -> " + node.getName());
-			writer.writeLine(indent + node.getName() + " -> " + inCohesionNode.getName());
+			writer.writeLine(indent + getCohesionNodeTitle(node) + " -> " + getCohesionNodeTitle(inCohesionNode));
 		}
+	}
+
+	private String getCohesionNodeTitle(CohesionNode inCohesionNode) {
+		return '"' +  inCohesionNode.getName() + (inCohesionNode.isMethod() ? "()" : "") + '"';
 	}
 
 	public static String filledString(int inHowMany, final String character) {
