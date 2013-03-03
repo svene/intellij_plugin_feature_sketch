@@ -48,7 +48,7 @@ public class CohesionNode {
 
 		CohesionNode that = (CohesionNode) o;
 
-		if (!name.equals(that.name)) return false;
+		if (name != null ? !name.equals(that.name) : that.name != null) return false;
 		if (nodeType != that.nodeType) return false;
 
 		return true;
@@ -56,8 +56,8 @@ public class CohesionNode {
 
 	@Override
 	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + nodeType.hashCode();
+		int result = name != null ? name.hashCode() : 0;
+		result = 31 * result + (nodeType != null ? nodeType.hashCode() : 0);
 		return result;
 	}
 }
