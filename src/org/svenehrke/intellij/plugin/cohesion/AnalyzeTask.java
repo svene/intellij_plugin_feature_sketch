@@ -1,5 +1,6 @@
 package org.svenehrke.intellij.plugin.cohesion;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -23,10 +24,13 @@ public class AnalyzeTask extends Task.Backgroundable {
 	}
 
 	public void run(@NotNull ProgressIndicator indicator) {
-//		output.addResult(new AnalysisResult("some module"));
+		ApplicationManager.getApplication().runReadAction(new Runnable() {
+			public void run() {
+				new CohesionAnalyzer(project, taskOptions, input, output).run();
+			}
+		});
+		output.printCohesionGraph();
 
-		final CohesionAnalyzer cohesionAnalyzer = new CohesionAnalyzer(project, taskOptions, input, output);
-		cohesionAnalyzer.run();
 	}
 
 	private static class MyPerformInBackgroundOption implements PerformInBackgroundOption {

@@ -11,8 +11,8 @@ import com.intellij.ui.content.ContentManager;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AnalysisOutput implements IAnalysisOutput {
 	private final Project project;
@@ -20,11 +20,24 @@ public class AnalysisOutput implements IAnalysisOutput {
 	private UsageTreeNode root;
 	private JTextArea textArea;
 
-	private List<CohesionNode> cohesionNodes = new ArrayList<CohesionNode>();
+	private CohesionNode mainNode;
+	private Set<CohesionNode> externalClassNodes = new HashSet<CohesionNode>();
 
 	public AnalysisOutput(Project inProject, ToolWindowManager inInstance) {
 		this.project = inProject;
 		this.toolWindowManager = inInstance;
+	}
+
+	public void setMainNode(CohesionNode inMainNode) {
+		mainNode = inMainNode;
+	}
+
+	public CohesionNode getMainNode() {
+		return mainNode;
+	}
+
+	public Iterable<CohesionNode> getExternalClassNodes() {
+		return externalClassNodes;
 	}
 
 	public void init() {
@@ -46,12 +59,12 @@ public class AnalysisOutput implements IAnalysisOutput {
 
 	public void printCohesionGraph() {
 //		final ICohesionPrinter cohesionPrinter = new DevelopmentCohesionPrinter(cohesionNode, new DefaultCohesionOutputWriter());
-		final ICohesionPrinter cohesionPrinter = new GraphvizCohesionPrinter(cohesionNodes, new DefaultCohesionOutputWriter());
+		final ICohesionPrinter cohesionPrinter = new GraphvizCohesionPrinter(this, new DefaultCohesionOutputWriter());
 		cohesionPrinter.printCohesionGraph();
 	}
 
-	public void addCohesionNode(CohesionNode inCohesionNode) {
-		cohesionNodes.add(inCohesionNode);
+	public void addExternalClassNode(CohesionNode inExternalClassNode) {
+		externalClassNodes.add(inExternalClassNode);
 	}
 
 	static class UsageTreeNode extends DefaultMutableTreeNode {

@@ -7,24 +7,40 @@ import java.util.List;
 
 public class GraphvizCohesionPrinter implements ICohesionPrinter {
 	private final ICohesionOutputWriter writer;
-	private List<CohesionNode> cohesionNodes = new ArrayList<CohesionNode>();
+	private final AnalysisOutput analysisOutput;
+	private final List<RelationShip> relationShips = new ArrayList<RelationShip>();
 
-	public GraphvizCohesionPrinter(List<CohesionNode> inCohesionNodes, ICohesionOutputWriter inWriter) {
-		cohesionNodes = inCohesionNodes;
+	public GraphvizCohesionPrinter(AnalysisOutput inAnalysisOutput, ICohesionOutputWriter inWriter) {
+		analysisOutput = inAnalysisOutput;
 		writer = inWriter;
 	}
 
 	public void printCohesionGraph() {
 		writer.writeLine("digraph FeatureSketchDiagram {");
-		for (CohesionNode cohesionNode : cohesionNodes) {
+
+		// Write cluster for main class:
+		writer.writeLine("subgraph cluster_" + analysisOutput.getMainNode().getName() + " {");
+		writer.writeLine("node [style=filled];");
+		writer.writeLine(String.format("label = \"%s\"", analysisOutput.getMainNode().getName()));
+		for (CohesionNode node : analysisOutput.getMainNode().getChildren().values()) {
+			_printCohesionGraph(node, 0);
+		}
+		writer.writeLine("}");
+
+		// Write clusters for external classes:
+		for (CohesionNode cohesionNode : analysisOutput.getExternalClassNodes()) {
 			writer.writeLine("subgraph cluster_" + cohesionNode.getName() + "class {");
 			writer.writeLine("node [style=filled];");
 			writer.writeLine(String.format("label = \"%s\"", cohesionNode.getName()));
-			for (CohesionNode node : cohesionNode.getChildren().values()) {
-				_printCohesionGraph(node, 0);
-			}
 			writer.writeLine("  }");
 		}
+
+		// write relationships between clusters:
+		for (RelationShip relationShip : relationShips) {
+			writer.writeLine("  " + getCohesionNodeTitle(relationShip.getFrom()) + " -> " + getCohesionNodeTitle(relationShip.getTo()));
+		}
+
+		// end of diagram:
 		writer.writeLine("}");
 	}
 
@@ -33,7 +49,30 @@ public class GraphvizCohesionPrinter implements ICohesionPrinter {
 		final String indent = filledString(inLevel + 2, " ");
 		writer.writeLine(indent + getCohesionNodeTitle(inCohesionNode));
 		for (CohesionNode node : inCohesionNode.getChildren().values()) {
-			writer.writeLine(indent + getCohesionNodeTitle(node) + " -> " + getCohesionNodeTitle(inCohesionNode));
+			if (node.isClass()) { //external class
+				relationShips.add(new RelationShip(node, inCohesionNode));
+			}
+			else {
+				writer.writeLine(indent + getCohesionNodeTitle(node) + " -> " + getCohesionNodeTitle(inCohesionNode));
+			}
+		}
+	}
+
+	private static class RelationShip {
+		private final CohesionNode from;
+		private final CohesionNode to;
+
+		private RelationShip(CohesionNode inFrom, CohesionNode inTo) {
+			from = inFrom;
+			to = inTo;
+		}
+
+		public CohesionNode getFrom() {
+			return from;
+		}
+
+		public CohesionNode getTo() {
+			return to;
 		}
 	}
 
@@ -46,7 +85,8 @@ public class GraphvizCohesionPrinter implements ICohesionPrinter {
 	}
 
 	private String classPrefix(CohesionNode inCohesionNode) {
-		return inCohesionNode.isClass() ? "X " : "";
+		return "";
+//		return inCohesionNode.isClass() ? "X " : "";
 	}
 
 	public static String filledString(int inHowMany, final String character) {

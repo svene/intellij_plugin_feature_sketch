@@ -1,7 +1,6 @@
 package org.svenehrke.intellij.plugin.cohesion;
 
 import com.intellij.lang.java.JavaLanguage;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.CompositePsiElement;
@@ -27,46 +26,50 @@ public class CohesionAnalyzer {
 	}
 
 	public void run() {
-		ApplicationManager.getApplication().runReadAction(new AnalyzerRunnable());
-		output.printCohesionGraph();
-	}
-
-	private class AnalyzerRunnable implements Runnable {
-
-		public void run() {
-			PsiFile psiFile = psiManager.findFile(input.getCurrentFile());
-			if (psiFile != null && JavaLanguage.INSTANCE.equals(psiFile.getLanguage())) {
-				PsiJavaFile javaFile = (PsiJavaFile) psiFile;
-//				final String packageName = javaFile.getPackageName();
-
-				for (PsiClass psiClass : javaFile.getClasses()) {
-					final CohesionNode classNode = new CohesionNode(psiClass.getName(), FKNodeType.CLASS);
-					output.addCohesionNode(classNode);
-
-					for (PsiMember psiMember : psiClass.getFields()) {
-						handlePsiMember(psiClass, classNode, psiMember, FKNodeType.FIELD);
-					}
-					for (PsiMember psiMember : psiClass.getMethods()) {
-						PsiMethod psiMethod = (PsiMethod) psiMember;
-
-						// Skip constructors since they usually touch most features of the class by nature
-						// and thus would only bring unuseful noise to the output:
-						if (psiMethod.isConstructor()) {
-							continue;
-						}
-						handlePsiMember(psiClass, classNode, psiMember, FKNodeType.METHOD);
-					}
-
-
-
+		PsiFile psiFile = psiManager.findFile(input.getCurrentFile());
+		if (psiFile != null && JavaLanguage.INSTANCE.equals(psiFile.getLanguage())) {
+			PsiJavaFile javaFile = (PsiJavaFile) psiFile;
+			PsiClass[] classes = javaFile.getClasses();
+			for (int i = 0; i < classes.length; i++) {
+				if (i > 0) {
+					continue; // current version of plugin only handles first class of file
 				}
 
+				PsiClass psiClass = classes[i];
+				final CohesionNode classNode = new CohesionNode(psiClass.getName(), FKNodeType.CLASS);
+				output.setMainNode(classNode);
+
+				handleFields(psiClass, output);
+				handleMethods(psiClass, output);
+
+
+			}
+
+		}
+	}
+
+		private void handleFields(PsiClass psiClass, IAnalysisOutput inOutput) {
+			for (PsiMember psiMember : psiClass.getFields()) {
+				handlePsiMember(psiClass, inOutput, psiMember, FKNodeType.FIELD);
 			}
 		}
 
-		private void handlePsiMember(PsiClass inPsiClass, CohesionNode inClassNode, PsiMember psiMember, FKNodeType inNodeType) {
+		private void handleMethods(PsiClass psiClass, IAnalysisOutput inOutput) {
+			for (PsiMember psiMember : psiClass.getMethods()) {
+				PsiMethod psiMethod = (PsiMethod) psiMember;
+
+				// Skip constructors since they usually touch most features of the class by nature
+				// and thus would only bring unuseful noise to the output:
+				if (psiMethod.isConstructor()) {
+					continue;
+				}
+				handlePsiMember(psiClass, inOutput, psiMember, FKNodeType.METHOD);
+			}
+		}
+
+		private void handlePsiMember(PsiClass inPsiClass, IAnalysisOutput inOutput, PsiMember psiMember, FKNodeType inNodeType) {
 			final CohesionNode cohesionNode = new CohesionNode(getNodeLabel(psiMember), inNodeType);
-			inClassNode.addChild(cohesionNode);
+			inOutput.getMainNode().addChild(cohesionNode);
 
 			final Collection<PsiReference> usages = ReferencesSearch.search(psiMember).findAll();
 
@@ -95,14 +98,14 @@ public class CohesionAnalyzer {
 							cohesionNode.addChild(methodNode);
 						}
 						else {
-							final CohesionNode methodNode = new CohesionNode(getNodeLabel(owningPsiClass), FKNodeType.CLASS);
-							cohesionNode.addChild(methodNode);
+							final CohesionNode externalClassNode = new CohesionNode(getNodeLabel(owningPsiClass), FKNodeType.CLASS);
+							cohesionNode.addChild(externalClassNode);
+							output.addExternalClassNode(externalClassNode);
 						}
 					}
 				}
 			}
 		}
-	}
 
 	private PsiMethod findOwningPsiMethod(PsiElement node) {
 		PsiElement parent = node.getParent();
