@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="feature_sketch_plugin:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/feature_sketch_plugin_jar</output-path>
+    <root id="archive" name="feature_sketch_plugin.jar">
+      <element id="directory" name="META-INF">
+        <element id="dir-copy" path="$PROJECT_DIR$/META-INF" />
+      </element>
+      <element id="module-output" name="intellij_plugin_feature_sketch" />
+    </root>
+  </artifact>
+</component>

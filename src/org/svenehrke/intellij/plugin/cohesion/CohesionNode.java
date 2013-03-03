@@ -6,12 +6,12 @@ import java.util.Map;
 public class CohesionNode {
 
 	private final String name;
-	private final boolean method;
+	private final FKNodeType nodeType;
 	private final Map<String, CohesionNode> children = new HashMap<String, CohesionNode>();
 
-	public CohesionNode(String inName, boolean inMethod) {
+	public CohesionNode(String inName, FKNodeType inNodeType) {
 		name = inName;
-		method = inMethod;
+		nodeType = inNodeType;
 	}
 
 	public void addChild(CohesionNode child) {
@@ -23,7 +23,14 @@ public class CohesionNode {
 	}
 
 	public boolean isMethod() {
-		return method;
+		return nodeType == FKNodeType.METHOD;
+	}
+	public boolean isClass() {
+		return nodeType == FKNodeType.CLASS;
+	}
+
+	public boolean isField() {
+		return nodeType == FKNodeType.FIELD;
 	}
 
 	public Map<String, CohesionNode> getChildren() {

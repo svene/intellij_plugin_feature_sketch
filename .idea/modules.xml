@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/intellij_plugin_cohesion.iml" filepath="$PROJECT_DIR$/intellij_plugin_cohesion.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij_plugin_feature_sketch.iml" filepath="$PROJECT_DIR$/intellij_plugin_feature_sketch.iml" />
     </modules>
   </component>
 </project>
