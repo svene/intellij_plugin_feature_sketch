@@ -16,13 +16,13 @@ b) clone this git repo, open the IntelliJ project, compile it and intall the plu
 the file 'out/artifacts/feature_sketch_plugin_jar/feature_sketch_plugin.jar
 
 ## Usage
-- Open any Java class, put the cursor somewhere in the editor and press CTRL-ALT-G
-- In the tab 'Dependency Viewer' the dependencies for the class should appear in text form.
-- Copy this text into a file 'feature_sketch.dot'
-- Run graphviz on the file like this for example:
--- dot -Tpng -o feature_sketch.png feature_sketch.dot
--- dot -Tsvg -o feature_sketch.svg feature_sketch.dot
--- circo -Tsvg -o feature_sketch.svg feature_sketch.dot
+* Open any Java class, put the cursor somewhere in the editor and press CTRL-ALT-G
+* In the tab 'Dependency Viewer' the dependencies for the class should appear in text form.
+* Copy this text into a file 'feature_sketch.dot'
+* Run graphviz on the file like this for example:
+* dot -Tpng -o feature_sketch.png feature_sketch.dot
+* dot -Tsvg -o feature_sketch.svg feature_sketch.dot
+* circo -Tsvg -o feature_sketch.svg feature_sketch.dot
 
 and open the output file in a browser for example.
 
