@@ -1,5 +1,9 @@
 package org.svenehrke.intellij.plugin.cohesion;
 
+import com.intellij.execution.filters.TextConsoleBuilder;
+import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -9,7 +13,6 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 
-import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,10 +21,10 @@ public class AnalysisOutput implements IAnalysisOutput {
 	private final Project project;
 	private final ToolWindowManager toolWindowManager;
 	private UsageTreeNode root;
-	private JTextArea textArea;
 
 	private CohesionNode mainNode;
 	private Set<CohesionNode> externalClassNodes = new HashSet<CohesionNode>();
+	private ConsoleView console;
 
 	public AnalysisOutput(Project inProject, ToolWindowManager inInstance) {
 		this.project = inProject;
@@ -52,8 +55,10 @@ public class AnalysisOutput implements IAnalysisOutput {
 //		Content content = ContentFactory.SERVICE.getInstance().createContent(myTree, Strings.ANALYSIS, false);
 //		contentManager.addContent(content);
 
-		textArea = new JTextArea();
-		Content content2 = ContentFactory.SERVICE.getInstance().createContent(textArea, Strings.ANALYSIS_CONSOLE, false);
+		final TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
+		console = builder.getConsole();
+
+		Content content2 = ContentFactory.SERVICE.getInstance().createContent(console.getComponent(), Strings.ANALYSIS_CONSOLE, false);
 		contentManager.addContent(content2);
 	}
 
@@ -94,7 +99,7 @@ public class AnalysisOutput implements IAnalysisOutput {
 
 	private class DefaultCohesionOutputWriter implements ICohesionOutputWriter {
 		public void writeLine(String inString) {
-			textArea.append(inString + "\n");
+			console.print(inString + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
 		}
 	}
 }

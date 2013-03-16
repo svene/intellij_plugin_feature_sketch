@@ -59,7 +59,7 @@ public class CohesionAnalyzer {
 				PsiMethod psiMethod = (PsiMethod) psiMember;
 
 				// Skip constructors since they usually touch most features of the class by nature
-				// and thus would only bring unuseful noise to the output:
+				// and thus would only bring noise to the output:
 				if (psiMethod.isConstructor()) {
 					continue;
 				}
