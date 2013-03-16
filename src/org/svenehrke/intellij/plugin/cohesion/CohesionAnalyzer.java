@@ -93,14 +93,17 @@ public class CohesionAnalyzer {
 					PsiMethod psiMethod = findOwningPsiMethod(parent);
 					if (psiMethod != null) {
 						final PsiClass owningPsiClass = findOwningPsiClass(psiMethod);
-						if (inPsiClass.getName().equals(owningPsiClass.getName())) {
+						if (inPsiClass.getName().equals(owningPsiClass.getName())) { // internal usage
 							final CohesionNode methodNode = new CohesionNode(getNodeLabel(psiMethod), FKNodeType.METHOD);
 							cohesionNode.addChild(methodNode);
 						}
-						else {
-							final CohesionNode externalClassNode = new CohesionNode(getNodeLabel(owningPsiClass), FKNodeType.CLASS);
-							cohesionNode.addChild(externalClassNode);
-							output.addExternalClassNode(externalClassNode);
+						else { // external usage
+							if (taskOptions.showExternalDependencies) {
+								final String nodeLabel = taskOptions.mergeExternalDependencies ? "external" : getNodeLabel(owningPsiClass);
+								final CohesionNode externalClassNode = new CohesionNode(nodeLabel, FKNodeType.CLASS);
+								cohesionNode.addChild(externalClassNode);
+								output.addExternalClassNode(externalClassNode);
+							}
 						}
 					}
 				}
@@ -129,6 +132,7 @@ public class CohesionAnalyzer {
 	}
 
 	private String getNodeLabel(PsiMember psiMember) {
-		return psiMember.getName();
+		return psiMember.getName() + System.identityHashCode(psiMember);
 	}
+
 }

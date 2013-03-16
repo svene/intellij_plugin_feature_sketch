@@ -14,18 +14,28 @@ public class AnalyzeCohesionAction extends AnAction {
 	@Override
 	public void actionPerformed(AnActionEvent actionEvent) {
 		Project project = actionEvent.getData(PlatformDataKeys.PROJECT);
+		AnalyzeTaskOptions taskOptions = new AnalyzeTaskOptions();
+		taskOptions.showExternalDependencies = false;
+		taskOptions.mergeExternalDependencies = true;
+		FSOptionsDialog dialog = new FSOptionsDialog(project, taskOptions);
+		dialog.show();
+		if (dialog.isOK()) {
+			taskOptions = dialog.getTaskOptions();
+
+			VirtualFile currentFile = DataKeys.VIRTUAL_FILE.getData(actionEvent.getDataContext());
+			AnalysisInput input = new AnalysisInput(currentFile);
+
+			AnalysisOutput output = new AnalysisOutput(project, ToolWindowManager.getInstance(project));
+			output.init();
+
+			AnalyzeTask task = new AnalyzeTask(project, taskOptions, input, output);
+			ProgressManager.getInstance().run(task);
+		}
+
 //		showMessage(project, "Hello, " + "!\n I am glad to see you.");
-		VirtualFile currentFile = DataKeys.VIRTUAL_FILE.getData(actionEvent.getDataContext());
 //		String s = currentFile != null ? currentFile.getName() : "NO FILE";
 //		showMessage(project, s);
 
-		AnalysisInput input = new AnalysisInput(currentFile);
-
-		AnalysisOutput output = new AnalysisOutput(project, ToolWindowManager.getInstance(project));
-		output.init();
-
-		AnalyzeTask task = new AnalyzeTask(project, new AnalyzeTaskOptions(), input, output);
-		ProgressManager.getInstance().run(task);
 	}
 
 	private void showMessage(Project inProject, final String inMessage) {
