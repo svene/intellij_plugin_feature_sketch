@@ -11,11 +11,9 @@ need to have graphviz installed.
 
 ## Installation
 
-Either
-
-* Install the plugin as binary from: TBD (jetbrains plugin repo | bintray | ...)
-* clone this git repo, open the IntelliJ project, compile it and intall the plugin from disk from
-  the file `out/artifacts/feature_sketch_plugin_jar/feature_sketch_plugin.jar`
+* clone this git repo
+* open the IntelliJ project, build it (which also produces the plugin's jar artifact)
+* intall the plugin from disk from the file `out/artifacts/feature_sketch_plugin_jar/feature_sketch_plugin.jar`
 
 ## Usage
 * Open any Java class, put the cursor somewhere in the editor and press CTRL-ALT-G
@@ -32,6 +30,7 @@ and open the output file in a browser for example.
 Early alpha.
 Things to be done:
 
+* Provide binary installation from: jetbrains plugin repo or bintray
 * Display diagram inside IDE similar to UML diagram
 
 ## Notes
