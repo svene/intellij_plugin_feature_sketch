@@ -1,8 +1,9 @@
 # 'Feature Sketch': Plugin for IntelliJ Idea
 
 ## Purpose
-In chapter '' of his book 'Legacy Code' Michael Feathers describes what he calls feature sketches.
-The idea is that by having a visual representation of the cohesion of a single class it should be easier to find
+In chapter 20 'This class is too big and I do not want it to get any bigger' of his book 'Working effectively with Legacy Code'
+Michael Feathers describes what he calls feature sketches.
+The idea is that by having a visual representation of the dependencies inside a single class it should be easier to find
 out how to split it into more meaningful parts.
 
 ## Prerequisites
